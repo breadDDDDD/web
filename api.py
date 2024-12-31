@@ -12,7 +12,7 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 name_user_data = [
-    {'Id': 1, 'Name': 'winnie',},
+    {'Id': 0, 'Name': 'jane doe',},
     ]
 
 class Welcome(Resource):

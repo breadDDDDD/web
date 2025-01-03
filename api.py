@@ -12,7 +12,7 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 name_user_data = [
-    {'Id': 1, 'Name': 'winnie',},
+    {'Id': 0, 'Name': 'jane doe',},
     ]
 
 class Welcome(Resource):
@@ -24,8 +24,7 @@ class Welcome(Resource):
 
 class name(Resource):
     @swag_from({
-        'responses': {200: {'description': 'Name user data successfully fetched'}}
-        
+        'responses': {200: {'description': 'Name user data successfully fetched'}}      
     })
     def get(self):
         return name_user_data

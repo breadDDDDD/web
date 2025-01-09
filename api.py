@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from flask_restful import Api, Resourcec
+from flask_restful import Api, Resource
 from flasgger import Swagger, swag_from
 import os
 
@@ -91,7 +91,7 @@ class excel(Resource):
                 return {"error": f"File {filename} not found"}, 404
         else:
             if not os.path.exists(uploads_dir):
-                return {"error": "Uploads directory does not exist"}, 404
+                return {"error": "directionary does not exist"}, 404
             
             files = os.listdir(uploads_dir)
             return {"files": files}, 200
@@ -184,21 +184,61 @@ class function(Resource):
     })
     def post(self):
         file = request.files['file']
-        file_path = "uploadedFile.csv"
-        file.save(file_path)
-        df = pd.read_csv(file_path)
+        if file.filename =='':
+            return {'description': 'error no file'},400
+        file_proc = "uploadedFile.csv"
+        file_created ="target_val.csv"
+        file.save(file_proc)
+        df = pd.read_csv(file_proc)
         target_val = df.iloc[:, -1]
         target = pd.DataFrame(target_val)
-        target.to_csv("target_val.csv")
-        os.remove(file_path)
+        target.to_csv(f"download\\target_val.csv")
+        os.remove(file_proc)
 
-        return {"message": "File saved", "target_file": "target_val.csv"},200    
+        return {"message": "File saved"},200
+    
+    
+class fuction_saving_pick(Resource):
+    @swag_from({
+         'responses' : {
+            200:{'description': 'succesful'},
+            404 : {'d3escription' : 'failed'}
+        }
+    })
+    def get(self):
+        dir = 'download'
+        file_name = "target_val.csv"
+        file_path = os.path.join(dir, file_name)
+        file = pd.read_csv(file_path)
+        file.to_csv(f"{os.getenv('USERPROFILE')}\\Downloads\\Target_val.csv")
+        return {"message": "file has been saved"},200 
+    
+    @swag_from({
+         'responses' : {
+            200:{'description': 'succesful'},
+            404 : {'d3escription' : 'failed'}
+        }
+    })
+    def delete(self):
+        dir = 'download'
+        file = "target_val.csv"
+        
+        if file:
+            file_path = os.path.join(dir, file)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                return{"message": "deleted"},200
+            else:
+                return{"message":"no file here"},400
+        else:
+            return{"message": "empty"},400
 
 api.add_resource(Welcome, '/')
 api.add_resource(name, '/name')
 api.add_resource(excel, '/excel')
 api.add_resource(excel_all, '/excel/all')
 api.add_resource(function, '/function/target')
+api.add_resource(fuction_saving_pick, '/function/gettingTarget')
 
 
 

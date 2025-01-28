@@ -162,7 +162,7 @@ class excel_all(Resource):
         }
     })
     def get(self):
-        path = r'C:\Users\geerv\source\repos\web\uploads'
+        path ='uploads'
         files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
         return{"files": files}, 200
     
@@ -187,7 +187,6 @@ class function(Resource):
         if file.filename =='':
             return {'description': 'error no file'},400
         file_proc = "uploadedFile.csv"
-        file_created ="target_val.csv"
         file.save(file_proc)
         df = pd.read_csv(file_proc)
         target_val = df.iloc[:, -1]
